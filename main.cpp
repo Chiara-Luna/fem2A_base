@@ -35,6 +35,8 @@ void run_tests()
     if( t_opennl ) test_opennl();
     if( t_lmesh ) Tests::test_load_mesh();
     if( t_io ) Tests::test_load_save_mesh();
+        /* test quadrature*/
+    Tests::test_quadrature();
 }
 
 void run_simu()
@@ -80,6 +82,7 @@ int main( int argc, const char * argv[] )
         || flag_is_used("--run-simu", arguments) ) {
         run_simu();
     }
+   
 
     return 0;
 }
