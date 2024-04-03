@@ -16,11 +16,12 @@ namespace FEM2A {
         public:
             Mesh() ;
 
+		// return x
             int nb_vertices() const ;
             int nb_edges() const ;
             int nb_triangles() const ;
 
-            vertex get_vertex( int vertex_index ) const ;
+            vertex get_vertex( int vertex_index ) const ; // return vertice d'index i
             vertex get_edge_vertex( int edge_index, int vertex_local_index ) const ;
             vertex get_triangle_vertex( int triangle_index, int vertex_local_index ) const ;
 
