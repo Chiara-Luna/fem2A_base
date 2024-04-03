@@ -52,7 +52,8 @@ namespace FEM2A {
         }
         
         int test_quadrature(){
-        std::cout << 123456789<< std::endl;
+        Quadrature quad(3);
+        std::cout << quad<< std::endl;
         return 0;
         }
 
