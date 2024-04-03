@@ -133,8 +133,9 @@ namespace FEM2A {
         : border_( border )
     {
         std::cout << "[ElementMapping] constructor for element " << i << " ";
-        if ( border ) std::cout << "(border)";
-        std::cout << '\n';
+        if ( border ){
+        std::cout << "(border)";
+        
         // TODO
     }
 
