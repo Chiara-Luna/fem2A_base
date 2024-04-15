@@ -53,7 +53,7 @@ namespace FEM2A {
         
         bool test_quadrature()
         {
-        	Quadrature quad = Quadrature::get_quadrature(0, false);
+        	/*Quadrature quad = Quadrature::get_quadrature(0, false);
          	std::cout<< quad.nb_points() << std::endl;
          	double sum =0;
          	for (int i= 0; i < quad.nb_points(); ++i){
@@ -62,9 +62,52 @@ namespace FEM2A {
          	std::cout<< quad.weight(i) << std::endl;
          	sum += quad.weight(i); 
          	}
-         	std::cout<< sum << std::endl;
-        	return true; 
+         	std::cout<< sum << std::endl;*/
+        	return true;
         }
-
+        
+        bool test_class_ElementMapping()
+        {
+        	Mesh mesh;
+            	mesh.load("data/square.mesh");
+        	ElementMapping element= ElementMapping(mesh, false, 4);
+        	vertex x_r;
+        	x_r.x = 0.2;
+        	x_r.y = 0.4;
+        	element.transform(x_r);
+        	element.jacobian_matrix(x_r);
+        	element.jacobian(x_r);
+        	return true;
+        }
+        
+        bool test_class_ShapeFunctions()
+        {
+        	ShapeFunctions func = ShapeFunctions(2,1);
+        	func.nb_functions();
+        	vertex x_r;
+        	x_r.x = 0.2;
+        	x_r.y = 0.4;
+        	func.evaluate(1,x_r);
+        	func.evaluate_grad( 1, x_r );
+        	return true;
+        }
+        
+                double unit_fct( vertex v )
+        {
+            return 1.;
+        }
+        
+        bool test_assemble()
+        {
+        	Mesh mesh;
+            	mesh.load("data/square.mesh");
+        	ElementMapping elt_mapping = ElementMapping(mesh, false, 4);
+        	ShapeFunctions reference_functions = ShapeFunctions(2,1);
+        	Quadrature quad = Quadrature::get_quadrature(4, false);
+        	DenseMatrix Ke;
+        	assemble_elementary_matrix(elt_mapping, reference_functions, quad, unit_fct, Ke );
+        	return true;
+        }
+        	
     }
 }
