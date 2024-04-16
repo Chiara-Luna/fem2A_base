@@ -5,7 +5,7 @@
 #include <cmath>
 #include <algorithm>
 #include <stdlib.h>
-
+#include "mesh.h"
 
 #include "../third_party/OpenNL_psm.h"
 
@@ -68,6 +68,7 @@ namespace FEM2A {
         nlDeleteContext( nl_context ) ;
 
         std::cout << ".. system solved" << std::endl ;
+        save_solution(x,"simul1");
         return true ;
     }
 

@@ -97,15 +97,25 @@ namespace FEM2A {
             return 1.;
         }
         
-        bool test_assemble()
+        bool test_assemble_triangle()
         {
         	Mesh mesh;
             	mesh.load("data/square.mesh");
         	ElementMapping elt_mapping = ElementMapping(mesh, false, 4);
         	ShapeFunctions reference_functions = ShapeFunctions(2,1);
+        	
         	Quadrature quad = Quadrature::get_quadrature(4, false);
         	DenseMatrix Ke;
         	assemble_elementary_matrix(elt_mapping, reference_functions, quad, unit_fct, Ke );
+        	
+        	int ind_max = mesh.nb_triangles();
+        	SparseMatrix K = SparseMatrix(ind_max*3);
+        	local_to_global_matrix(mesh,4,Ke,K );
+        	
+        	std::vector< bool > attribute_is_dirichlet (mesh.nb_vertices(),true);
+        	std::vector< double > values (mesh.nb_vertices(),1);
+        	std::vector< double > F (mesh.nb_vertices(),0);
+        	apply_dirichlet_boundary_conditions(mesh,attribute_is_dirichlet, values, K, F);
         	return true;
         }
         	
