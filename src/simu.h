@@ -42,8 +42,8 @@ namespace FEM2A {
             Mesh mesh; 
             mesh.load(mesh_filename); //chargement maillage
             
-            int ind_max = mesh.nb_triangles();
-            SparseMatrix K = SparseMatrix(ind_max*3); //matrice globale
+            //int ind_max = mesh.nb_triangles();
+            SparseMatrix K = SparseMatrix(mesh.nb_vertices()); //matrice globale
             std::vector< double > values (K.nb_rows(),0); //values g = x+y
             
             for (int element = 0; element< mesh.nb_triangles(); ++ element){
@@ -52,20 +52,20 @@ namespace FEM2A {
             	Quadrature quad = Quadrature::get_quadrature(2, false); //quadrature de l'element
             	DenseMatrix Ke; 
             	assemble_elementary_matrix(elt_mapping, reference_functions, quad, unit_fct, Ke ); //matrice ke de l'element
-            	local_to_global_matrix(mesh,4,Ke,K ); //ajout matrice element sur matrice globale
-            	for (int point = 0; point<3;++point){ //ajoute valeur g=x+y dans vecteur values (condition de dirichlet simple)
-            		vertex local_vertex = mesh.get_triangle_vertex(element,point);
-            		vertex global_vertex= elt_mapping.transform(local_vertex);
-            		int global_index = mesh.get_triangle_vertex_index(element,point);
-            		values[global_index]= global_vertex.x +global_vertex.y;
-            	}
-            	} // fin travail par element
+            	local_to_global_matrix(mesh,element,Ke,K ); //ajout matrice element sur matrice globale	
+            } // fin travail par element
             	
-            	std::vector< bool > attribute_is_dirichlet (K.nb_rows(),true); 
-            	std::vector< double > F (K.nb_rows(),0); //dirichlet pur
-            	apply_dirichlet_boundary_conditions(mesh,attribute_is_dirichlet, values, K, F); //aplication cond de dirichlet sur K et F
-            	std::vector< double > x; //creation vecteur solution
-            	solve(K,F,x); // return true si simulation reussie / sauver solution?????
+            for (int point = 0; point<mesh.nb_vertices(); ++point){
+            	values[point]= mesh.get_vertex(point).x + mesh.get_vertex(point).y;
+            }
+            mesh.set_attribute(unit_fct,1,true);
+            std::vector< bool > attribute_is_dirichlet (2,false);
+            attribute_is_dirichlet[1] = true;
+            std::vector< double > F (K.nb_rows(),0); //dirichlet pur
+            apply_dirichlet_boundary_conditions(mesh,attribute_is_dirichlet, values, K, F); //aplication cond de dirichlet sur K et F
+            std::vector< double > x; //creation vecteur solution
+            std::cout << "ok jusqua creation systeme"<< std::endl;
+            solve(K,F,x); // return true si simulation reussie / sauver solution?????
             }
         }
 

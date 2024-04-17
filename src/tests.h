@@ -118,6 +118,20 @@ namespace FEM2A {
         	apply_dirichlet_boundary_conditions(mesh,attribute_is_dirichlet, values, K, F);
         	return true;
         }
+        
+        bool test_assemble_vector()
+        {
+        	Mesh mesh;
+            	mesh.load("data/square.mesh");
+        	ElementMapping elt_mapping = ElementMapping(mesh, false, 4);
+        	ShapeFunctions reference_functions = ShapeFunctions(1,1);
+        	
+        	Quadrature quad = Quadrature::get_quadrature(2, true);
+        	std::vector< double > Fe (2,0);
+        	assemble_elementary_vector(elt_mapping, reference_functions, quad, unit_fct, Fe );
+        	
+        	return true;
+        }
         	
     }
 }

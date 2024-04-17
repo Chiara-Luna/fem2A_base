@@ -180,7 +180,8 @@ namespace FEM2A {
         double det;
         DenseMatrix J = ElementMapping::jacobian_matrix(x_r );
         if (border_){ 
-        det = sqrt(J.get(0,0)*J.get(0,0) + J.get(1,1)*J.get(1,1));
+        DenseMatrix T = J.transpose();
+        det = sqrt(T.get(0,0)*J.get(0,0)+T.get(0,1)*J.get(1,0));
         }
         else {
         det = J.get(0,0)*J.get(1,1) - J.get(1,0)*J.get(0,1);
@@ -289,10 +290,20 @@ namespace FEM2A {
         std::vector< double >& Fe )
     {
         std::cout << "compute elementary vector (source term)" << '\n';
-        // TODO
+        for (int i = 0; i<2; ++i){
+        	double sum = 0;
+        	for (int q = 0; q< quadrature.nb_points() ; ++q){
+        		vertex pt = quadrature.point(q);
+        		vertex M_pt = elt_mapping.transform(pt);
+        		sum += quadrature.weight(q) * reference_functions.evaluate(i, pt) * source(M_pt) * elt_mapping.jacobian(pt);
+        		std::cout<< "sum "<< sum << std::endl;
+        	}
+        	Fe[i] = sum;
+        	std::cout<< "Fe["<<i<<"] : "<< Fe[i]<< std::endl;
+        }
     }
 
-    void assemble_elementary_neumann_vector(
+    /*void assemble_elementary_neumann_vector(
         const ElementMapping& elt_mapping_1D,
         const ShapeFunctions& reference_functions_1D,
         const Quadrature& quadrature_1D,
@@ -312,7 +323,7 @@ namespace FEM2A {
     {
         std::cout << "Fe -> F" << '\n';
         // TODO
-    }
+    }*/
 
     void apply_dirichlet_boundary_conditions(
 	const Mesh& M,
@@ -336,7 +347,7 @@ namespace FEM2A {
         }
     }
 
-    void solve_poisson_problem(
+    /*void solve_poisson_problem(
             const Mesh& M,
             double (*diffusion_coef)(vertex),
             double (*source_term)(vertex),
@@ -347,6 +358,6 @@ namespace FEM2A {
     {
         std::cout << "solve poisson problem" << '\n';
         // TODO
-    }
+    }*/
 
 }
