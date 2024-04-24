@@ -204,15 +204,25 @@ namespace FEM2A {
     double ShapeFunctions::evaluate( int i, vertex x_r ) const
     {
         float phi;
-        if (i==0){
-        phi = 1- x_r.x - x_r.y;
+        if (dim_ == 2){ // for triangle
+        	if (i==0){
+        		phi = 1- x_r.x - x_r.y;
+        	}
+        	if (i==1){
+        		phi = x_r.x;
+        	}
+        	if (i==2){
+        		phi = x_r.y;
+        	}
         }
-        if (i==1){
-        phi = x_r.x;
-        }
-        if (i==2){
-        phi = x_r.y;
-        }
+        if (dim_ == 1){ // for edge
+        	if (i==0){
+        		phi = 1- x_r.x ;
+        	}
+        	if (i==1){
+        		phi = x_r.x;
+        	}
+        }	
         return phi;
     }
 
@@ -272,12 +282,11 @@ namespace FEM2A {
 
     void local_to_global_matrix(const Mesh& M,int t,const DenseMatrix& Ke,SparseMatrix& K )
     {
-        for (int i = 0; i<3; ++i){
+        for (int i = 0; i<Ke.height(); ++i){
         	int I = M.get_triangle_vertex_index(t, i);
-        	for (int j = 0; j<3; ++j){
-        		double to_add = Ke.get(i,j);
+        	for (int j = 0; j<Ke.width(); ++j){
         		int J = M.get_triangle_vertex_index(t, j );
-        		K.add(I,J,to_add);
+        		K.add(I,J,Ke.get(i,j));
     		}
     	}
     }
@@ -289,29 +298,34 @@ namespace FEM2A {
         double (*source)(vertex),
         std::vector< double >& Fe )
     {
-        std::cout << "compute elementary vector (source term)" << '\n';
-        for (int i = 0; i<2; ++i){
+    	for (int i = 0; i<3; ++i){
         	double sum = 0;
         	for (int q = 0; q< quadrature.nb_points() ; ++q){
         		vertex pt = quadrature.point(q);
         		vertex M_pt = elt_mapping.transform(pt);
         		sum += quadrature.weight(q) * reference_functions.evaluate(i, pt) * source(M_pt) * elt_mapping.jacobian(pt);
-        		std::cout<< "sum "<< sum << std::endl;
         	}
         	Fe[i] = sum;
-        	std::cout<< "Fe["<<i<<"] : "<< Fe[i]<< std::endl;
         }
     }
+       
 
-    /*void assemble_elementary_neumann_vector(
+    void assemble_elementary_neumann_vector(
         const ElementMapping& elt_mapping_1D,
         const ShapeFunctions& reference_functions_1D,
         const Quadrature& quadrature_1D,
         double (*neumann)(vertex),
         std::vector< double >& Fe )
     {
-        std::cout << "compute elementary vector (neumann condition)" << '\n';
-        // TODO
+        for (int i = 0; i<2; ++i){
+        	double sum = 0;
+        	for (int q = 0; q< quadrature_1D.nb_points() ; ++q){
+        		vertex pt = quadrature_1D.point(q);
+        		vertex M_pt = elt_mapping_1D.transform(pt);
+        		sum += quadrature_1D.weight(q) * reference_functions_1D.evaluate(i, pt) * neumann(M_pt) * elt_mapping_1D.jacobian(pt);
+        	}
+        	Fe[i] = sum;
+        }
     }
 
     void local_to_global_vector(
@@ -321,9 +335,17 @@ namespace FEM2A {
         std::vector< double >& Fe,
         std::vector< double >& F )
     {
-        std::cout << "Fe -> F" << '\n';
-        // TODO
-    }*/
+        for (int local = 0; local <Fe.size(); ++local){
+        	if (border){
+        	int I = M.get_edge_vertex_index(i, local);
+        	F[I] = Fe[local];
+    		}
+    		if (not border){
+    		int I = M.get_triangle_vertex_index(i, local);
+        	F[I] = Fe[local];
+    		}
+    	}
+    }
 
     void apply_dirichlet_boundary_conditions(
 	const Mesh& M,
@@ -332,15 +354,15 @@ namespace FEM2A {
         SparseMatrix& K,
         std::vector< double >& F )
     {
-        std::vector< bool > redondance (M.nb_vertices(),false);
-        int penalty = 1000;
+        std::vector< bool > redondance (values.size(),false);
+        double penalty = 10000;
         for (int i=0; i< M.nb_edges(); ++i){
         	int j = M.get_edge_attribute(i);
         	for (int k = 0; k<2;++k){
         		int ind_vertice = M.get_edge_vertex_index(i,k);
         		if (attribute_is_dirichlet[j] && not redondance[ind_vertice]){
         			K.add(ind_vertice,ind_vertice,penalty);
-        			F[ind_vertice]+= penalty* values[j];
+        			F[ind_vertice] += penalty * values[ind_vertice];
         			redondance[ind_vertice] = true;
         		}
         	}

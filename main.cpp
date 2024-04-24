@@ -35,7 +35,8 @@ void run_tests()
     const bool t_ElMap = false;
     const bool t_ShFunc = false;
     const bool t_assemTr = false;
-    const bool t_assemVec = true;
+    const bool t_assemVec = false;
+    const bool t_assemNeu = true;
 
     if( t_opennl ) test_opennl();
     if( t_lmesh ) Tests::test_load_mesh();
@@ -45,19 +46,26 @@ void run_tests()
     if ( t_ShFunc ) Tests::test_class_ShapeFunctions();
     if ( t_assemTr ) Tests::test_assemble_triangle();
     if ( t_assemVec ) Tests::test_assemble_vector();
+    if ( t_assemNeu ) Tests::test_assemble_neumann_vector();
 }
 
 void run_simu()
 {
 
-    const bool simu_pure_dirichlet = true;
+    const bool simu_pure_dirichlet = false;
+    const bool simu_source_dirichlet = false;
+    const bool simu_sinus_bump = false;
+    const bool simu_sinus_bump_error = true;
+    const bool simu_neumann = false;
 
     const bool verbose = flag_is_used( "-v", arguments )
         || flag_is_used( "--verbose", arguments );
 
-    if( simu_pure_dirichlet ) {
-        Simu::pure_dirichlet_pb("data/square.mesh", verbose);
-    }
+    if( simu_pure_dirichlet ) Simu::pure_dirichlet_pb("data/square", verbose);
+    if( simu_source_dirichlet ) Simu::source_dirichlet_pb("data/square_fine", verbose);
+    if( simu_sinus_bump ) Simu::sinus_bump_dirichlet_pb("data/square_fine", verbose);
+    if( simu_sinus_bump_error ) Simu::sinus_bump_error_dirichlet_pb("data/square", verbose);
+    /*if( simu_neumann ) Simu::neumann_pb("data/square_fine", verbose);*/
 }
 
 int main( int argc, const char * argv[] )

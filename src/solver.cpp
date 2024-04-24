@@ -60,7 +60,6 @@ namespace FEM2A {
                 << std::endl ;
             return false ;
         }
-	std::cout << "controle" << std::endl ;
         for( int i = 0; i < n; i++ ) {
             x[i] = nlGetVariable( i ) ;
         }
@@ -68,7 +67,6 @@ namespace FEM2A {
         nlDeleteContext( nl_context ) ;
 
         std::cout << ".. system solved" << std::endl ;
-        save_solution(x,"square.mesh.bb");
         return true ;
     }
 
