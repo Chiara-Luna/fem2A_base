@@ -55,8 +55,9 @@ void run_simu()
     const bool simu_pure_dirichlet = false;
     const bool simu_source_dirichlet = false;
     const bool simu_sinus_bump = false;
-    const bool simu_sinus_bump_error = true;
-    const bool simu_neumann = false;
+    const bool simu_sinus_bump_error = false;
+    const bool simu_neumann = true;
+    const bool simu_mug = false;
 
     const bool verbose = flag_is_used( "-v", arguments )
         || flag_is_used( "--verbose", arguments );
@@ -65,7 +66,8 @@ void run_simu()
     if( simu_source_dirichlet ) Simu::source_dirichlet_pb("data/square_fine", verbose);
     if( simu_sinus_bump ) Simu::sinus_bump_dirichlet_pb("data/square_fine", verbose);
     if( simu_sinus_bump_error ) Simu::sinus_bump_error_dirichlet_pb("data/square", verbose);
-    /*if( simu_neumann ) Simu::neumann_pb("data/square_fine", verbose);*/
+    if( simu_neumann ) Simu::neumann_pb("data/square_fine", verbose);
+    if( simu_mug ) Simu::mug_pb("data/mug_0_2", verbose);
 }
 
 int main( int argc, const char * argv[] )
