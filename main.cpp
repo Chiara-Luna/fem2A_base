@@ -28,7 +28,7 @@ using namespace FEM2A;
 
 void run_tests()
 {
-    const bool t_opennl = false;
+    const bool t_opennl = true;
     const bool t_lmesh = false;
     const bool t_io = false;
     const bool t_quad = false;
@@ -36,7 +36,7 @@ void run_tests()
     const bool t_ShFunc = false;
     const bool t_assemTr = false;
     const bool t_assemVec = false;
-    const bool t_assemNeu = true;
+    const bool t_assemNeu = false;
 
     if( t_opennl ) test_opennl();
     if( t_lmesh ) Tests::test_load_mesh();
@@ -56,17 +56,17 @@ void run_simu()
     const bool simu_source_dirichlet = false;
     const bool simu_sinus_bump = false;
     const bool simu_sinus_bump_error = false;
-    const bool simu_neumann = true;
-    const bool simu_mug = false;
+    const bool simu_neumann = false;
+    const bool simu_mug = true;
 
     const bool verbose = flag_is_used( "-v", arguments )
         || flag_is_used( "--verbose", arguments );
 
     if( simu_pure_dirichlet ) Simu::pure_dirichlet_pb("data/square", verbose);
-    if( simu_source_dirichlet ) Simu::source_dirichlet_pb("data/square_fine", verbose);
-    if( simu_sinus_bump ) Simu::sinus_bump_dirichlet_pb("data/square_fine", verbose);
+    if( simu_source_dirichlet ) Simu::source_dirichlet_pb("data/square", verbose);
+    if( simu_sinus_bump ) Simu::sinus_bump_dirichlet_pb("data/square", verbose);
     if( simu_sinus_bump_error ) Simu::sinus_bump_error_dirichlet_pb("data/square", verbose);
-    if( simu_neumann ) Simu::neumann_pb("data/square_fine", verbose);
+    if( simu_neumann ) Simu::neumann_pb("data/square", verbose);
     if( simu_mug ) Simu::mug_pb("data/mug_0_2", verbose);
 }
 

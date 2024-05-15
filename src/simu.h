@@ -187,7 +187,7 @@ namespace FEM2A {
             
         void sinus_bump_dirichlet_pb( const std::string& mesh_filename, bool verbose )
         {
-            std::cout << "Solving a source Dirichlet problem" << std::endl;
+            std::cout << "Solving a sinus_bump problem" << std::endl;
             if ( verbose ) {
                 std::cout << " with lots of printed details..." << std::endl;
             }
@@ -231,7 +231,7 @@ namespace FEM2A {
             
         void sinus_bump_error_dirichlet_pb( const std::string& mesh_filename, bool verbose )
         {
-            std::cout << "Solving a source Dirichlet problem" << std::endl;
+            std::cout << "Solving a sinus bump error problem" << std::endl;
             if ( verbose ) {
                 std::cout << " with lots of printed details..." << std::endl;
             }
@@ -286,7 +286,7 @@ namespace FEM2A {
             
         void neumann_pb( const std::string& mesh_filename, bool verbose )
         {
-            std::cout << "Solving a source Dirichlet problem" << std::endl;
+            std::cout << "Solving a Neumann problem" << std::endl;
             if ( verbose ) {
                 std::cout << " with lots of printed details..." << std::endl;
             }
